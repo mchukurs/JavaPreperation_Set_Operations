@@ -83,8 +83,81 @@ public class MapMain {
         //merge from ARRAYLIST to MAP with single statement
         fullList.forEach(contact -> contacts.merge(contact.name, contact,
                 Contact::mergeContactData
-                ));
+        ));
 
         contacts.forEach((k, v) -> System.out.println("key= " + k + ", value = " + v));
+        System.out.println("-".repeat(20));
+        System.out.println("Learning about .computer() and .computeIf()");
+        //looping over ArrayList of Strings
+        //1 exists in contact list ,the other 2 dont
+//        for (String contactName : new String[]{"Daisy Duck", "Daffy Duck", "Scrooge McDuck"}) {
+//            //compute() takes in K and bifunction
+//            contacts.compute(contactName, (k, v) -> new Contact(k));
+//        };
+//        contacts.forEach((k, v) -> System.out.println("key= " + k + ", value = " + v));
+        for (String contactName : new String[]{"Daisy Duck", "Daffy Duck", "Scrooge McDuck"}) {
+            //compute() takes in K and bifunction
+            contacts.computeIfAbsent(contactName, (k) -> new Contact(k));
+        }
+        ;
+        contacts.forEach((k, v) -> System.out.println("key= " + k + ", value = " + v));
+
+        //family business part
+        for (String contactName : new String[]{"Daisy Duck", "Daffy Duck", "Scrooge McDuck"}) {
+            //compute() takes in K and bifunction
+            contacts.computeIfPresent(contactName, (k, v) -> {
+                v.addEmail("Fun Place");
+                return v;
+            });
+        }
+        ;
+        contacts.forEach((k, v) -> System.out.println("key= " + k + ", value = " + v));
+        System.out.println("-".repeat(20));
+
+        //replaceAll on map is similar to replaceAll on list
+        contacts.replaceAll((k, v) -> {
+            //for the KEY of type STRING we remove spaces and append domain
+            String newEmail = k.replaceAll(" ", "") + "@funplace.com";
+            //for the VALUE we replace email if it exists using our own method
+            v.replaceEmailIfExists("DDuck@funplace.com", newEmail);
+            return v;
+        });
+        contacts.forEach((k, v) -> System.out.println("key= " + k + ", value = " + v));
+        System.out.println("-".repeat(20));
+        //contact name = Daisy Jane Duck, and email = daisyj@duck.com
+        Contact daisy = new Contact("Daisy Jane Duck", "daisyj@duck.com");
+        //now we want to add this contact to map for DAISY DUCK (ignoring middle name or initial)
+        // call REPLACE on contacts map
+        Contact replacedContact = contacts.replace("Daisy Duck", daisy);
+        System.out.println("daisy =" + daisy);
+        System.out.println("replacedContact =" + replacedContact);
+        contacts.forEach((k, v) -> System.out.println("key= " + k + ", value = " + v));
+        //above the VALUE was changed. THere's overloaded method to replace only if KEY:VALUE match
+        System.out.println("-".repeat(20));
+        Contact updatedDaisy = replacedContact.mergeContactData(daisy);
+        System.out.println("updatedDaisy =" + updatedDaisy);
+        boolean success = contacts.replace("Daisy Duck", daisy, updatedDaisy);
+        if (success) {
+            System.out.println("Successfully replaced element");
+
+        } else {
+            System.out.printf("Did not match on both key: %s and value: %s %n".formatted("Daisy Duck", replacedContact));
+        }
+        contacts.forEach((k, v) -> System.out.println("key= " + k + ", value = " + v));
+        //also REMOVE is present on map
+        //1st version takes KEY and return the VALUE that was removed (or null)
+        //2nd version takes KEY and VALUE and returns boolean
+        System.out.println("-".repeat(20));
+        success = contacts.remove("Daisy Duck", daisy);
+        if (success) {
+            System.out.println("Successfully removed element");
+
+        } else {
+            System.out.printf("Did not match on both key: %s and value: %s %n".formatted("Daisy Duck", daisy));
+        }
+        contacts.forEach((k, v) -> System.out.println("key= " + k + ", value = " + v));
+
+
+
     }
 }
