@@ -90,7 +90,6 @@ public class Contact {
         newContact.emails.addAll(contact.emails);
         newContact.phones.addAll(contact.phones);
 
-
         return newContact;
     }
 }
